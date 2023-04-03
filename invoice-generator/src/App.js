@@ -1,6 +1,8 @@
 import './App.css';
 import React from 'react';
 import { useState } from 'react';
+import { Page, Text, View, Document, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
+
 
 const styles = {
 
@@ -8,12 +10,28 @@ const styles = {
 
 function App() {
   const [formData, setFormData] = useState({
-    description: '',
+    description: "",
   });
+
+  function handleInputChange(e) {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  }
+
+  // function handleSubmit(e) {
+  //   e.preventDefault();
+  //   console.log(formData);
+  // }
+
+  function handleDownload() {
+    console.log(formData);
+  }
 
   return (
     <div className="App">
-      <form className={styles.form}>
+      <form className={styles.form} onSubmit={handleDownload}>
         <div className={styles.header}>
           <h1>Invoice</h1>
           <div className={styles.description}>
@@ -22,7 +40,7 @@ function App() {
               name="description" 
               id="description" 
               placeholder="Job Description"
-              onChange={(e) => {setFormData(e.target.value)}}
+              onChange={handleInputChange}
               value={formData.description}
             />
           </div>
@@ -37,6 +55,9 @@ function App() {
         </div>
         <button type="submit">Download Invoice</button>
       </form>
+      <PDFDownloadLink document={<Document><Page><Text>Invoice</Text></Page></Document>} fileName="invoice.pdf">
+        {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Download now!')}
+      </PDFDownloadLink>
 
     </div>
   );
